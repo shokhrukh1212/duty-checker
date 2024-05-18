@@ -7,17 +7,30 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 const groupId = process.env.TELEGRAM_GROUP_ID;
-const users = ['@Javlon084', '@coder_naimov', '@hakimjonov712', '@Oybek_Makhsudov', '@NamozOtabek', 'Otabekov Ro"zimurod', '@aziz_ismoilov', 'Bekzod Rahmonov', '@khon_engineer'];
+const users = ['Bobur aka', 'Otabekov Ro"zimurod', '@Otabekov00000', '@Javlon084', '@coder_naimov', '@Oybek_Makhsudov', '@NamozOtabek', 'Bekzod Rahmonov', '@artikhboevj', '@hakimjonov712', '@aziz_ismoilov', '@khon_engineer'];
+const weekly_users = ["Azizbek akalarni xonasi, @aziz_ismoilov", "Ro'zimurodlarni xonasi, @Otabekov00000", "Bekzodlarni xonasi, @Oybek_Makhsudov", "Xasanboylarni xonasi, @coder_naimov", "Shohruxlarni xonasi, @khon_engineer"];
 
 let currentIndex = 0;
+let weeklyIndex = 0;
 
-cron.schedule('0 10 * * *', () => {
+// Daily schedule
+cron.schedule('0 10 * * 1-6', () => {
     const username = users[currentIndex];
-    bot.sendMessage(groupId, `Iltimos, kunlik navbatchilikni unutmang: ${username}`);
+    bot.sendMessage(groupId, `Iltimos, bugun kunlik navbatchilikni unutmang: ${username}`);
     
     currentIndex = (currentIndex + 1) % users.length;
 }, {
     timezone: "Asia/Tashkent"
+});
+
+// Weekly schedule
+cron.schedule('0 10 * * 0', () => {
+    const room = weekly_users[weeklyIndex];
+    bot.sendMessage(groupId, `Iltimos, bugun haftalik navbatchilikni unutmang!: ${room}`);
+    
+    weeklyIndex = (weeklyIndex + 1) % weekly_users.length;
+}, {
+    timezone: "Asia/Tashkent" 
 });
 
 bot.on('polling_error', (error) => {
