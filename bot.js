@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const TelegramBot = require('node-telegram-bot-api');
 const cron = require('node-cron');
+const express = require('express');
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
@@ -14,23 +15,30 @@ let currentIndex = 0;
 let weeklyIndex = 0;
 
 // Daily schedule
-cron.schedule('0 10 * * 1-6', () => {
+cron.schedule('0 5 * * 1-6', () => {
     const username = users[currentIndex];
-    bot.sendMessage(groupId, `Iltimos, bugun kunlik navbatchilikni unutmang: ${username}`);
+    bot.sendMessage(groupId, `**Iltimos, bugun kunlik navbatchilikni unutmang!**: ${username}`);
     
     currentIndex = (currentIndex + 1) % users.length;
-}, {
-    timezone: "Asia/Tashkent"
 });
 
 // Weekly schedule
-cron.schedule('0 10 * * 0', () => {
+cron.schedule('30 5 * * 0', () => {
     const room = weekly_users[weeklyIndex];
-    bot.sendMessage(groupId, `Iltimos, bugun haftalik navbatchilikni unutmang!: ${room}`);
+    bot.sendMessage(groupId, `**Iltimos, bugun haftalik navbatchilikni unutmang!**: ${room}`);
     
     weeklyIndex = (weeklyIndex + 1) % weekly_users.length;
-}, {
-    timezone: "Asia/Tashkent" 
+});
+
+// Create an express server to keep Glitch awake
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send('Bot is running');
+});
+
+const listener = app.listen(process.env.PORT || 3000, () => {
+    console.log(`Your app is listening on port ${listener.address().port}`);
 });
 
 bot.on('polling_error', (error) => {
